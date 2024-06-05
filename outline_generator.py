@@ -8,7 +8,7 @@ from selenium.webdriver.common.keys import Keys
 PROMPT_LIMIT = 3500
 
 
-transcription_folder = 'training_transcription_with_timestamps/'
+transcription_folder = 'testing_rate_transcription/'
 outline_folder = 'outline/'
 outline_folder2 = 'outline2/'
 files = os.listdir(transcription_folder)
@@ -64,7 +64,7 @@ for f in files:
     extractedLines = [line for line in lines if randint(1, extractRatio) == 1]
     assebleLines = '\n'.join(extractedLines)
 
-    extractedLines = [prompt] + extractedLines
+    extractedLines = [prompt] + extractedLines + ['zh-tw']
     parts = [extractedLines.copy()]
 
     outlines = []
@@ -114,7 +114,7 @@ for f in files:
     with open(os.path.join(outline_folder, f)[:-4] + '.txt', 'w', encoding='utf-8') as file:
         file.write('\n----------\n'.join(outlines))
 
-    with open(os.path.join(outline_folder2, f)[:-4] + '.txt', 'w', encoding='utf-8') as file:
-        file.write('\n----------\n'.join(outlines))
+    # with open(os.path.join(outline_folder2, f)[:-4] + '.txt', 'w', encoding='utf-8') as file:
+    #     file.write('\n----------\n'.join(outlines))
     
     driver.close()
