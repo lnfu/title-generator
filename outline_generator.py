@@ -14,7 +14,7 @@ outline_folder2 = 'outline2/'
 files = os.listdir(transcription_folder)
 
 transcriptions = []
-prompt = '以下是一部影片的逐字稿，請幫我整理成一段大綱：'
+prompt = '以下是一部影片的逐字稿，請幫我整理成一段詳細的大綱：'
 
 def get_parts(message: str) -> list[str]:
     cur = 0
