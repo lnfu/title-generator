@@ -7,13 +7,9 @@ def generateTitle():
     load_dotenv(dotenv_path='.env')
 
     API_KEY = os.getenv('API_KEY')
-    MODEL_NAME = 'gpt-3.5-turbo'
+    MODEL_NAME = os.getenv('MODEL_NAME')
 
     client = OpenAI(api_key=API_KEY)
-
-    outlineFile = 'data/outline.txt'
-    promptFile = 'data/prompt.txt'
-    titleFile = 'data/title.txt'
 
     promptTypes = {
         "驚嘆": "驚嘆語句",
@@ -23,11 +19,15 @@ def generateTitle():
         "轉折": "轉折句",
     }
 
+    outlineFile = 'data/outline.txt'
+    promptFile = 'data/prompt.txt'
+    titleFile = 'data/title.txt'
+
     prompts = ''
     if os.path.exists(promptFile):
         with open(promptFile, 'r', encoding='utf-8') as file:
             prompts = file.read()
-    with open(outlineFile, 'r', encoding='utf-8') as file:
+    with open(outlineFile, 'r') as file:
         outline = file.read()
 
 
