@@ -1,13 +1,14 @@
 from openai import OpenAI
-import csv, os
+from dotenv import load_dotenv
+import os
 
-with open('api_key.txt', 'r') as file:
-    key = file.read()
+title_count = 5
+load_dotenv(dotenv_path='.env')
 
-with open('model_name.txt', 'r') as file:
-    model_name = file.read()
+API_KEY = os.getenv('API_KEY')
+MODEL_NAME = os.getenv('MODEL_NAME')
 
-client = OpenAI(api_key=key)
+client = OpenAI(api_key=API_KEY)
 
 promptTypes = {
     "驚嘆": "驚嘆語句",
@@ -17,43 +18,40 @@ promptTypes = {
     "轉折": "轉折句",
 }
 
-outline_folder = 'testing_compare_outline/'
-title_folder = 'testing_compare_title/'
-videoDataInputPath = 'testing_compare.csv'
-title_count = 5
+outlineFile = 'data/outline.txt'
+promptFile = 'data/prompt.txt'
+titleFile = 'data/title.txt'
 
-with open(videoDataInputPath, "r", encoding="utf-8") as videoDataFile:
-    videoData = list(csv.reader(videoDataFile))[1:]
+prompts = ''
+if os.path.exists(promptFile):
+    with open(promptFile, 'r', encoding='utf-8') as file:
+        prompts = file.read()
+with open(outlineFile, 'r') as file:
+    outline = file.read()
 
-for channel, title, processedTitle, prompts, duration, videoId in videoData:
-    if videoId != 'evBXDZ1dB_E':
-        continue
-    with open(os.path.join(outline_folder, videoId + '.txt'), 'r', encoding='utf-8') as file:
-        outline = file.read()
 
-    prompt_str = "標題內容需要包含"
-    prompts = list(filter(None, prompts.split(" ")))
-    for prompt in prompts:
-        prompt_str += promptTypes[prompt] + "、"
-    prompt_str = prompt_str[:-1] + "。"
-    # print(f"#zh-tw 請根據以下的影片摘要想一個吸睛的 YouTube 影片標題。{prompt_str}\n摘要：{outline}")
-    # print('---')
-    # continue
-    titles = []
-    for i in range(title_count):
-        completion = client.chat.completions.create(
-            model=model_name,
-            messages = [
-                {"role":"system","content":"你是一位在 YouTube 平台上的影音創作者，你擅長撰寫吸引人的影片標題。"},
-                {"role":"user", "content": f"#zh-tw 請根據以下影片摘要想一個吸睛的 YouTube 影片標題。{prompt_str}\n摘要：{outline}"}
-            ]
-        )
+prompt_str = '標題內容需要包含'
+prompts = list(filter(None, prompts.split(" ")))
+for prompt in prompts:
+    prompt_str += promptTypes[prompt] + "、"
+prompt_str = prompt_str[:-1] + "。"
 
-        response = completion.choices[0].message.content
-        if response[-1] == '\n':
-            response = response[:-1]
-        titles.append(response)
-        print(response)
 
-    with open(os.path.join(title_folder, videoId + '.txt'), 'w', encoding='utf-8') as file:
-        file.write('\n'.join(titles))
+titles = []
+for i in range(title_count):
+    completion = client.chat.completions.create(
+        model=MODEL_NAME,
+        messages=[
+            {"role":"system","content":"你是一位在 YouTube 平台上的影音創作者，你擅長撰寫吸引人的影片標題。"},
+            {"role":"user", "content": f"#zh-tw 請根據以下影片摘要想一個吸睛的 YouTube 影片標題。{prompt_str}\n摘要：{outline}"}
+        ]
+    )
+
+    response = completion.choices[0].message.content
+    if response[-1] == '\n':
+        response = response[:-1]
+    titles.append(response)
+    # print(response)
+
+with open(titleFile, 'w', encoding='utf-8') as file:
+    file.write('\n'.join(titles))
