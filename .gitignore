@@ -3,3 +3,4 @@
 .ipynb_checkpoints/*
 .env*
 !.env.example
+data/*
