@@ -1,60 +1,30 @@
 import os
-import csv
 import torch
 from pytube import YouTube
 from transformers import pipeline, GenerationConfig
-
 
 whisperPretrainedModel = "openai/whisper-small"
 whisperModel = "Jingmiao/whisper-small-zh_tw"
 
 
-def ___downloadAudioFile(videoId, outputDirectory):
+def downloadAudio(videoId, outputDirectory):
+    # 檢查音檔是否已經存在
+    audioFilePath = os.path.join(outputDirectory, f"{videoId}.mp3")
+    if os.path.exists(audioFilePath):
+        print(f"{audioFilePath} already exist")
+        return
+
+    # 取得 YouTube 影片音訊 (mp3)
     url = f"https://youtube.com/watch?v={videoId}"
     audio = YouTube(url).streams.get_audio_only()
     audioFilePath = audio.download(
         output_path=outputDirectory, filename=f"{videoId}.mp3"
     )
+    print(f"Audio: {audioFilePath}", flush=True)
     return audioFilePath
 
 
-def __getDirectoryPrefix(metadataFilePath):
-    return os.path.splitext(metadataFilePath)[0]
-
-
-def downloadAudio(metadataFilePath):
-    with open(metadataFilePath, "r", encoding="utf-8") as metadataFile:
-        metadata = list(csv.reader(metadataFile))[1:]
-
-    audioDirectory = os.path.join(
-        "data", __getDirectoryPrefix(metadataFilePath) + "_" + "audio"
-    )
-
-    if not os.path.exists(audioDirectory):
-        os.makedirs(audioDirectory)
-        print(f"Directory '{audioDirectory}' created.")
-    else:
-        print(f"Directory '{audioDirectory}' already exists.")
-
-    for channel, title, processedTitle, prompts, duration, videoId in metadata:
-        audioFilePath = os.path.join(audioDirectory, f"{videoId}.mp3")
-        if os.path.exists(audioFilePath):
-            continue
-        ___downloadAudioFile(videoId, audioDirectory)
-        print(f"Audio output: {audioFilePath}")
-
-
-def generateTranscript(metadataFilePath):
-    with open(metadataFilePath, "r", encoding="utf-8") as metadataFile:
-        metadata = list(csv.reader(metadataFile))[1:]
-
-    transcriptionDirectory = os.path.join(
-        "data", __getDirectoryPrefix(metadataFilePath) + "_" + "transcription"
-    )
-    audioDirectory = os.path.join(
-        "data", __getDirectoryPrefix(metadataFilePath) + "_" + "audio"
-    )
-
+def getTranscriber():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     transcriber = pipeline(
         "automatic-speech-recognition", model=whisperModel, device=device
@@ -62,26 +32,34 @@ def generateTranscript(metadataFilePath):
     transcriber.model.generation_config = GenerationConfig.from_pretrained(
         whisperPretrainedModel
     )
+    print(f"Use: {device}", flush=True)
+    return transcriber
 
-    print(f"Use: {device}")
 
-    for channel, title, processedTitle, prompts, duration, videoId in metadata:
+def generateTranscript(transcriber, audioDirectory, videoId, outputDirectory):
+    audioFilePath = os.path.join(audioDirectory, f"{videoId}.mp3")
+    transcriptionFilePath = os.path.join(outputDirectory, f"{videoId}.srt")
 
-        audioFilePath = os.path.join(audioDirectory, f"{videoId}.mp3")
-        transcriptionFilePath = os.path.join(transcriptionDirectory, f"{videoId}.srt")
+    # 檢查逐字稿是否已經存在
+    if os.path.exists(transcriptionFilePath):
+        print(f"{transcriptionFilePath} already exist", flush=True)
+        return
 
-        if os.path.exists(transcriptionFilePath):
-            continue
+    # 檢查音訊檔案是否存在
+    if not os.path.exists(audioFilePath):
+        print(f"{audioFilePath} not exist", flush=True)
+        return
 
-        transcription = transcriber(audioFilePath, return_timestamps=True)
+    # 將語音轉換為文字
+    transcription = transcriber(audioFilePath, return_timestamps=True)
 
-        with open(
-            transcriptionFilePath, "w", encoding="utf-8", newline=""
-        ) as transcriptionFile:
+    with open(
+        transcriptionFilePath, "w", encoding="utf-8", newline=""
+    ) as transcriptionFile:
+        for idx, chunk in enumerate(transcription["chunks"]):
+            start, end = chunk["timestamp"]
+            text = chunk["text"]
+            transcriptionFile.write(f"{idx + 1}\n{start} --> {end}\n{text}\n\n")
 
-            for idx, chunk in enumerate(transcription["chunks"]):
-                start, end = chunk["timestamp"]
-                text = chunk["text"]
-                transcriptionFile.write(f"{idx + 1}\n{start} --> {end}\n{text}\n\n")
-
-        print(f"Transcription output: {transcriptionFilePath}")
+    print(f"Transcription: {transcriptionFilePath}", flush=True)
+    return transcriptionFilePath
