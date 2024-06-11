@@ -3,17 +3,17 @@ import csv
 import json
 import argparse
 from dotenv import load_dotenv
-from transcript.speech2text import downloadAudio, generateTranscript, getTranscriber
-from outline.outline_gen import generateOutline
-from utils.utils import ensureDirectoryExists
+from generators.transcript_generator import downloadAudio, generateTranscript, getTranscriber
+from generators.outline_generator import generateOutline
+from utils.common import ensureDirectoryExists, TITLE_TYPE_DESCRIPTIONS
 
-promptTypes = {
-    "驚嘆": "驚嘆語句",
-    "疑問": "疑問語句",
-    "項目數": "影片中主要內容列表的項目數量",
-    "數據": "影片提到的重要數據",
-    "轉折": "轉折句",
-}
+# promptTypes = {
+#     "驚嘆": "驚嘆語句",
+#     "疑問": "疑問語句",
+#     "項目數": "影片中主要內容列表的項目數量",
+#     "數據": "影片提到的重要數據",
+#     "轉折": "轉折句",
+# }
 
 systemContent = "你是一位在 YouTube 平台上的影音創作者，你擅長撰寫吸引人的影片標題。"
 
@@ -28,14 +28,15 @@ def parse_arguments():
     parser.add_argument(
         "-o",
         "--output-directory",
-        help="The directory to place audio/transcript/outline/title files into",
+        help="The directory to place audio/transcript/outline/dataset files into",
     )
     return parser.parse_args()
+
 
 if __name__ == "__main__":
     args = parse_arguments()
 
-    load_dotenv(dotenv_path='.env')
+    load_dotenv(dotenv_path=".env")
     metadataFilePath = args.metadata_file
 
     if args.output_directory:
@@ -43,7 +44,7 @@ if __name__ == "__main__":
             args.output_directory, os.path.splitext(metadataFilePath)[0]
         )
     else:
-        ensureDirectoryExists('data')
+        ensureDirectoryExists("data")
         prefix = os.path.join("data", os.path.splitext(metadataFilePath)[0])
 
     ensureDirectoryExists(prefix)
@@ -81,7 +82,7 @@ if __name__ == "__main__":
             os.path.join(prefix, "outline"),
         )
 
-    # 利用大綱產生 fine tuning dataset
+    # 利用大綱和原標題產生 fine tuning dataset
     datasetFilePath = os.path.join(prefix, "dataset.jsonl")
     for channel, title, processedTitle, prompts, duration, videoId in metadata:
         outlineFilePath = os.path.join(
@@ -97,7 +98,7 @@ if __name__ == "__main__":
         promptStr = "標題內容需要包含"
         prompts = list(filter(None, prompts.split(" ")))
         for prompt in prompts:
-            promptStr += promptTypes[prompt] + "、"
+            promptStr += TITLE_TYPE_DESCRIPTIONS[prompt] + "、"
         promptStr = promptStr[:-1] + "。"
 
         data = {

@@ -2,7 +2,7 @@ import os
 import torch
 from pytube import YouTube
 from transformers import pipeline, GenerationConfig
-from utils.utils import ensureDirectoryExists
+from utils.common import ensureDirectoryExists
 
 whisperPretrainedModel = "openai/whisper-small"
 whisperModel = "Jingmiao/whisper-small-zh_tw"

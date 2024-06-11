@@ -2,7 +2,7 @@ import os
 from random import randint
 from openai import OpenAI
 from dotenv import load_dotenv
-from utils.utils import ensureDirectoryExists
+from utils.common import ensureDirectoryExists
 
 TOKEN_LIMIT = 3500
 
