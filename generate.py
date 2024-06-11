@@ -29,7 +29,7 @@ def parse_arguments():
         default=5,
         help="The title types you want",
     )
-    # TODO type 加上選項
+    # TODO 選項是多選多，不是多選一
     parser.add_argument(
         "-o",
         "--output-directory",
