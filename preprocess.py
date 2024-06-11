@@ -17,7 +17,7 @@ systemContent = "你是一位在 YouTube 平台上的影音創作者，你擅長
 def parse_arguments():
     parser = argparse.ArgumentParser(
         prog="preprocess.py",
-        description="Prepare traning dataset",
+        description="Prepare training dataset",
         epilog="repo: https://github.com/lnfu/title-generator",
     )
     parser.add_argument("metadata_file", help="The file containing metadata")
