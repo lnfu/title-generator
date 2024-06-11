@@ -1,6 +1,6 @@
 # 2024 人工智慧概論 Final Project
 
-Fine-tune ChatGPT 以生成吸引人的影片標題。
+主題：Fine-tune ChatGPT 以生成吸引人的 YouTube 影片標題。
 
 ## 主要程式入口
 
