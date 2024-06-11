@@ -85,11 +85,11 @@ if __name__ == "__main__":
     # 產生標題
     titles = generateTitle(
         args.number,
-        list(filter(None, args.types.split(" "))),
+        args.types,
         os.getenv("FINE_TUNED_MODEL_NAME"),
         outlineDirectory,
         videoId,
         titleDirectory,
     )
     for i, title in enumerate(titles):
-        print(f"{i+1}\t{title}\n")
+        print('%2d. %s' % (i + 1, title))
