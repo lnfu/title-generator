@@ -33,14 +33,10 @@ if __name__ == "__main__":
     load_dotenv(dotenv_path=".env")
     metadataFilePath = args.metadata_file
 
-    if args.output_directory:
-        prefix = os.path.join(
-            args.output_directory, os.path.splitext(metadataFilePath)[0]
-        )
-    else:
-        ensureDirectoryExists("data")
-        prefix = os.path.join("data", os.path.splitext(metadataFilePath)[0])
+    outputDirectory = args.output_directory if args.output_directory else "data"
+    ensureDirectoryExists(outputDirectory)
 
+    prefix = os.path.join(outputDirectory, os.path.splitext(metadataFilePath)[0])
     ensureDirectoryExists(prefix)
 
     with open(metadataFilePath, "r", encoding="utf-8") as metadataFile:
