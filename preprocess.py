@@ -30,20 +30,7 @@ def parse_arguments():
         "--output-directory",
         help="The directory to place audio/transcript/outline/title files into",
     )
-    parser.add_argument(
-        "-g",
-        "--generate-transcript",
-        action="store_true",
-        help="Generate transcripts from audio if not already available",
-    )
-    parser.add_argument(
-        "-d",
-        "--download-audio",
-        action="store_true",
-        help="Download audio if not already available",
-    )
     return parser.parse_args()
-
 
 if __name__ == "__main__":
     args = parse_arguments()
@@ -64,18 +51,26 @@ if __name__ == "__main__":
     with open(metadataFilePath, "r", encoding="utf-8") as metadataFile:
         metadata = list(csv.reader(metadataFile))[1:]
 
-    if args.download_audio:
-        for channel, title, processedTitle, prompts, duration, videoId in metadata:
-            downloadAudio(videoId, os.path.join(prefix, "audio"))
-
-    if args.generate_transcript:
-        transcriber = getTranscriber()
-        for channel, title, processedTitle, prompts, duration, videoId in metadata:
+    # 產生逐字稿
+    transcriber = getTranscriber()
+    audioDirectory = os.path.join(prefix, "audio")
+    transcriptionDirectory = os.path.join(prefix, "transcript")
+    for channel, title, processedTitle, prompts, duration, videoId in metadata:
+        audioFilePath = os.path.join(audioDirectory, f"{videoId}.mp3")
+        transcriptionFilePath = os.path.join(transcriptionDirectory, f"{videoId}.srt")
+        # 檢查逐字稿是否已經存在
+        if not os.path.exists(transcriptionFilePath):
+            print(f"{transcriptionFilePath} 不存在，正在產生逐字稿")
+            # 檢查音檔是否已經存在
+            if not os.path.exists(audioFilePath):
+                print(f"{audioFilePath} 不存在，正在下載音檔")
+                downloadAudio(videoId, audioDirectory)
+            # 產生逐字稿
             generateTranscript(
                 transcriber,
-                os.path.join(prefix, "audio"),
+                audioDirectory,
                 videoId,
-                os.path.join(prefix, "transcript"),
+                transcriptionDirectory,
             )
 
     # 根據逐字稿產生大綱

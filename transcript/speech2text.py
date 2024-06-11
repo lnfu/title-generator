@@ -12,12 +12,6 @@ def downloadAudio(videoId, outputDirectory):
     # 檢查目錄
     ensureDirectoryExists(outputDirectory)
 
-    # 檢查音檔是否已經存在
-    audioFilePath = os.path.join(outputDirectory, f"{videoId}.mp3")
-    if os.path.exists(audioFilePath):
-        print(f"{audioFilePath} already exist")
-        return
-
     # 取得 YouTube 影片音訊 (mp3)
     url = f"https://youtube.com/watch?v={videoId}"
     audio = YouTube(url).streams.get_audio_only()
@@ -47,11 +41,6 @@ def generateTranscript(transcriber, audioDirectory, videoId, outputDirectory):
 
     audioFilePath = os.path.join(audioDirectory, f"{videoId}.mp3")
     transcriptionFilePath = os.path.join(outputDirectory, f"{videoId}.srt")
-
-    # 檢查逐字稿是否已經存在
-    if os.path.exists(transcriptionFilePath):
-        print(f"{transcriptionFilePath} already exist", flush=True)
-        return
 
     # 檢查音訊檔案是否存在
     if not os.path.exists(audioFilePath):
