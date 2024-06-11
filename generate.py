@@ -17,12 +17,6 @@ def parse_arguments():
         description="Generate clickable title",
         epilog="repo: https://github.com/lnfu/title-generator",
     )
-    parser.add_argument(
-        "input-format",
-        choices=["transcript", "audio"],
-        type=str,
-        help="The format of input file",
-    )
     parser.add_argument("file", type=str, help="The input file")
     parser.add_argument(
         "-n", "--number", type=int, default=5, help="The number of titles to generate"
@@ -61,23 +55,20 @@ if __name__ == "__main__":
     ensureDirectoryExists(outlineDirectory)
     ensureDirectoryExists(titleDirectory)
 
-    videoId = os.path.join(outputDirectory, os.path.splitext(args.file)[0])
-    extension = os.path.join(outputDirectory, os.path.splitext(args.file)[-1])
+    videoId = os.path.splitext(args.file)[0]
+    extension = os.path.splitext(args.file)[-1]
 
     # 把檔案移到工作區
-    if args.input_format == "audio":
-        if extension != "mp3":
-            print(f"檔案格式錯誤")
-            exit()
+    if extension == ".mp3":
         shutil.copy(args.file, audioDirectory)
-    elif args.input_format == "transcript":
-        if extension != "srt":
-            print(f"檔案格式錯誤")
-            exit()
+    elif extension == ".srt":
         shutil.copy(args.file, transcriptDirectory)
+    else:
+        print(f"檔案格式錯誤")
+        exit()
 
     # 產生逐字稿
-    if args.input_format == "audio":
+    if extension == ".mp3":
         transcriber = getTranscriber()
         generateTranscript(
             transcriber,
