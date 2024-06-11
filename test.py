@@ -75,6 +75,7 @@ if __name__ == "__main__":
     # 產生標題
     with open(os.path.join(prefix, "result.csv"), "w", newline="", encoding="utf-8") as resultFile:
         writer = csv.writer(resultFile)
+        writer.writerow(["原標題", "ChatGPT 標題", "Fine-tuned ChatGPT 標題"])
 
         for channel, title, processedTitle, titleTypes, duration, videoId in metadata:
             titleTypes = list(filter(None, titleTypes.split(" ")))
