@@ -56,7 +56,22 @@ def generateTranscript(transcriber, audioDirectory, videoId, transcriptDirectory
         for idx, chunk in enumerate(transcription["chunks"]):
             start, end = chunk["timestamp"]
             text = chunk["text"]
-            transcriptionFile.write(f"{idx + 1}\n{start} --> {end}\n{text}\n\n")
+            if isTextValid(text):
+                transcriptionFile.write(f"{idx + 1}\n{start} --> {end}\n{text}\n\n")
 
     print(f"Transcription: {transcriptionFilePath}", flush=True)
     return transcriptionFilePath
+
+
+def isTextValid(text):
+    charCount = {}
+    for char in text:
+        if char in charCount:
+            charCount[char] += 1
+        else:
+            charCount[char] = 1
+
+    for char, count in charCount.items():
+        if count > 15:
+            return False
+    return True

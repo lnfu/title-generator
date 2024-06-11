@@ -24,12 +24,10 @@ def parse_arguments():
     parser.add_argument(
         "-t",
         "--types",
-        choices=list(TITLE_TYPE_DESCRIPTIONS.keys()),
-        type=int,
-        default=5,
-        help="The title types you want",
+        type=str,
+        nargs="+",
+        help="The title types you want e.g., 驚嘆,疑問,項目數,數據,轉折",
     )
-    # TODO type 加上選項
     parser.add_argument(
         "-o",
         "--output-directory",
@@ -55,7 +53,7 @@ if __name__ == "__main__":
     ensureDirectoryExists(outlineDirectory)
     ensureDirectoryExists(titleDirectory)
 
-    videoId = os.path.splitext(args.file)[0]
+    videoId = os.path.splitext(os.path.basename(args.file))[0]
     extension = os.path.splitext(args.file)[-1]
 
     # 把檔案移到工作區
@@ -87,7 +85,7 @@ if __name__ == "__main__":
     # 產生標題
     titles = generateTitle(
         args.number,
-        list(filter(None, args.types.split(","))),
+        list(filter(None, args.types.split(" "))),
         os.getenv("FINE_TUNED_MODEL_NAME"),
         outlineDirectory,
         videoId,
