@@ -7,9 +7,9 @@ from utils.common import ensureDirectoryExists
 TOKEN_LIMIT = 3500
 
 
-def generateOutline(transcriptionDirectory, videoId, outlineDirectory):
+def generateOutline(transcriptDirectory, videoId, outlineDirectory):
     # 檢查目錄
-    ensureDirectoryExists(transcriptionDirectory)
+    ensureDirectoryExists(transcriptDirectory)
     ensureDirectoryExists(outlineDirectory)
 
     # ChatGPT Client
@@ -18,13 +18,13 @@ def generateOutline(transcriptionDirectory, videoId, outlineDirectory):
     MODEL_NAME = "gpt-3.5-turbo"
     client = OpenAI(api_key=API_KEY)
 
-    transcriptionFilePath = os.path.join(transcriptionDirectory, f"{videoId}.srt")
+    transcriptFilePath = os.path.join(transcriptDirectory, f"{videoId}.srt")
     outlineFilePath = os.path.join(outlineDirectory, f"{videoId}.txt")
 
     prompt = "以下是一部影片的逐字稿，請幫我整理成一段詳細的大綱："
 
-    with open(transcriptionFilePath, "r", encoding="utf-8") as transcriptionFile:
-        parts = transcriptionFile.read()
+    with open(transcriptFilePath, "r", encoding="utf-8") as transcriptFile:
+        parts = transcriptFile.read()
 
     lines = []
     for part in parts.split("\n\n"):
