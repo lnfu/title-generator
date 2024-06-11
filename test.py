@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     base = os.path.splitext(os.path.basename(metadataFilePath))[0]
     outputDirectory = args.output_directory if args.output_directory else "data"
-    prefix = os.path.join(outputDirectory, os.path.basename(metadataFilePath)[0])
+    prefix = os.path.join(outputDirectory, base)
     ensureDirectoryExists(outputDirectory)
     ensureDirectoryExists(prefix)
 
