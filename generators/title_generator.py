@@ -3,14 +3,11 @@ from openai import OpenAI
 from utils.common import ensureDirectoryExists, TITLE_TYPE_DESCRIPTIONS
 
 
-# TODO 看要不要把 outputDirectory 都統一改成 specific 名稱
-# TODO 檢查 with open 是不是都是 UTF-8 encode
-# TODO MODEL_NAME = os.getenv('FINE_TUNED_MODEL_NAME')
 def generateTitle(
-    titleCount, titleTypes, modelName, outlineDirectory, videoId, outputDirectory
+    titleCount, titleTypes, modelName, outlineDirectory, videoId, titleDirectory
 ):
     ensureDirectoryExists(outlineDirectory)
-    ensureDirectoryExists(outputDirectory)
+    ensureDirectoryExists(titleDirectory)
 
     # ChatGPT Client
     client = OpenAI(api_key=os.getenv("API_KEY"))
@@ -22,7 +19,7 @@ def generateTitle(
     prmopt = prmopt[:-1] + "。"
 
     outlineFilePath = os.path.join(outlineDirectory, f"{videoId}.txt")
-    titleFilePath = os.path.join(outputDirectory, f"{videoId}.txt")
+    titleFilePath = os.path.join(titleDirectory, f"{videoId}.txt")
 
     # 大綱
     with open(outlineFilePath, "r", encoding="utf-8") as outlineFile:

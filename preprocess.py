@@ -3,17 +3,13 @@ import csv
 import json
 import argparse
 from dotenv import load_dotenv
-from generators.transcript_generator import downloadAudio, generateTranscript, getTranscriber
+from generators.transcript_generator import (
+    downloadAudio,
+    generateTranscript,
+    getTranscriber,
+)
 from generators.outline_generator import generateOutline
 from utils.common import ensureDirectoryExists, TITLE_TYPE_DESCRIPTIONS
-
-# promptTypes = {
-#     "驚嘆": "驚嘆語句",
-#     "疑問": "疑問語句",
-#     "項目數": "影片中主要內容列表的項目數量",
-#     "數據": "影片提到的重要數據",
-#     "轉折": "轉折句",
-# }
 
 systemContent = "你是一位在 YouTube 平台上的影音創作者，你擅長撰寫吸引人的影片標題。"
 

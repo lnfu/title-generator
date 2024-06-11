@@ -73,7 +73,7 @@ if __name__ == "__main__":
         )
 
     # 產生標題
-    with open(os.path.join(prefix, "result.csv"), "w", newline="") as resultFile:
+    with open(os.path.join(prefix, "result.csv"), "w", newline="", encoding="utf-8") as resultFile:
         writer = csv.writer(resultFile)
 
         for channel, title, processedTitle, titleTypes, duration, videoId in metadata:

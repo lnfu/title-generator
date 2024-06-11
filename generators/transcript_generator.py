@@ -8,15 +8,15 @@ whisperPretrainedModel = "openai/whisper-small"
 whisperModel = "Jingmiao/whisper-small-zh_tw"
 
 
-def downloadAudio(videoId, outputDirectory):
+def downloadAudio(videoId, audioDirectory):
     # 檢查目錄
-    ensureDirectoryExists(outputDirectory)
+    ensureDirectoryExists(audioDirectory)
 
     # 取得 YouTube 影片音訊 (mp3)
     url = f"https://youtube.com/watch?v={videoId}"
     audio = YouTube(url).streams.get_audio_only()
     audioFilePath = audio.download(
-        output_path=outputDirectory, filename=f"{videoId}.mp3"
+        output_path=audioDirectory, filename=f"{videoId}.mp3"
     )
     print(f"Audio: {audioFilePath}", flush=True)
     return audioFilePath
@@ -34,13 +34,13 @@ def getTranscriber():
     return transcriber
 
 
-def generateTranscript(transcriber, audioDirectory, videoId, outputDirectory):
+def generateTranscript(transcriber, audioDirectory, videoId, transcriptDirectory):
     # 檢查目錄
     ensureDirectoryExists(audioDirectory)
-    ensureDirectoryExists(outputDirectory)
+    ensureDirectoryExists(transcriptDirectory)
 
     audioFilePath = os.path.join(audioDirectory, f"{videoId}.mp3")
-    transcriptionFilePath = os.path.join(outputDirectory, f"{videoId}.srt")
+    transcriptionFilePath = os.path.join(transcriptDirectory, f"{videoId}.srt")
 
     # 檢查音訊檔案是否存在
     if not os.path.exists(audioFilePath):

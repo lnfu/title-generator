@@ -2,7 +2,7 @@ import os
 import shutil
 import argparse
 from dotenv import load_dotenv
-from utils.common import ensureDirectoryExists
+from utils.common import ensureDirectoryExists, TITLE_TYPE_DESCRIPTIONS
 from generators.transcript_generator import (
     generateTranscript,
     getTranscriber,
@@ -28,7 +28,12 @@ def parse_arguments():
         "-n", "--number", type=int, default=5, help="The number of titles to generate"
     )
     parser.add_argument(
-        "-t", "--types", type=int, default=5, help="The title types you want"
+        "-t",
+        "--types",
+        choices=list(TITLE_TYPE_DESCRIPTIONS.keys()),
+        type=int,
+        default=5,
+        help="The title types you want",
     )
     # TODO type 加上選項
     parser.add_argument(
@@ -57,16 +62,22 @@ if __name__ == "__main__":
     ensureDirectoryExists(titleDirectory)
 
     videoId = os.path.join(outputDirectory, os.path.splitext(args.file)[0])
+    extension = os.path.join(outputDirectory, os.path.splitext(args.file)[-1])
 
-    # TODO 檢查檔案附檔名是 mp3/srt
-
+    # 把檔案移到工作區
     if args.input_format == "audio":
+        if extension != "mp3":
+            print(f"檔案格式錯誤")
+            exit()
         shutil.copy(args.file, audioDirectory)
     elif args.input_format == "transcript":
+        if extension != "srt":
+            print(f"檔案格式錯誤")
+            exit()
         shutil.copy(args.file, transcriptDirectory)
 
+    # 產生逐字稿
     if args.input_format == "audio":
-        # 先產生逐字稿
         transcriber = getTranscriber()
         generateTranscript(
             transcriber,
