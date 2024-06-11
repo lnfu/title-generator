@@ -55,7 +55,7 @@ if __name__ == "__main__":
     ensureDirectoryExists(outlineDirectory)
     ensureDirectoryExists(titleDirectory)
 
-    videoId = os.path.splitext(args.file)[0]
+    videoId = os.path.splitext(os.path.basename(args.file))[0]
     extension = os.path.splitext(args.file)[-1]
 
     # 把檔案移到工作區
