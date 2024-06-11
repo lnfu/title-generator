@@ -73,7 +73,8 @@ if __name__ == "__main__":
         )
 
     # 產生標題
-    with open(os.path.join(prefix, "result.csv"), "w", newline="", encoding="utf-8") as resultFile:
+    resultFilePath = os.path.join(prefix, "result.csv")    
+    with open(resultFilePath, "w", newline="", encoding="utf-8") as resultFile:
         writer = csv.writer(resultFile)
         writer.writerow(["原標題", "ChatGPT 標題", "Fine-tuned ChatGPT 標題"])
 
@@ -96,3 +97,4 @@ if __name__ == "__main__":
                 os.path.join(prefix, "title_ftGPT"),
             )[0]
             writer.writerow([processedTitle, oriGPTTitle, ftGPTTitle])
+    print(f'結果儲存在 {resultFilePath}')
