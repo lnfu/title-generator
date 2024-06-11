@@ -40,7 +40,7 @@ def generateTranscript(transcriber, audioDirectory, videoId, transcriptDirectory
     ensureDirectoryExists(transcriptDirectory)
 
     audioFilePath = os.path.join(audioDirectory, f"{videoId}.mp3")
-    transcriptionFilePath = os.path.join(transcriptDirectory, f"{videoId}.srt")
+    transcriptFilePath = os.path.join(transcriptDirectory, f"{videoId}.srt")
 
     # 檢查音訊檔案是否存在
     if not os.path.exists(audioFilePath):
@@ -48,19 +48,19 @@ def generateTranscript(transcriber, audioDirectory, videoId, transcriptDirectory
         return
 
     # 將語音轉換為文字
-    transcription = transcriber(audioFilePath, return_timestamps=True)
+    transcript = transcriber(audioFilePath, return_timestamps=True)
 
     with open(
-        transcriptionFilePath, "w", encoding="utf-8", newline=""
-    ) as transcriptionFile:
-        for idx, chunk in enumerate(transcription["chunks"]):
+        transcriptFilePath, "w", encoding="utf-8", newline=""
+    ) as transcriptFile:
+        for idx, chunk in enumerate(transcript["chunks"]):
             start, end = chunk["timestamp"]
             text = chunk["text"]
             if isTextValid(text):
-                transcriptionFile.write(f"{idx + 1}\n{start} --> {end}\n{text}\n\n")
+                transcriptFile.write(f"{idx + 1}\n{start} --> {end}\n{text}\n\n")
 
-    print(f"Transcription: {transcriptionFilePath}", flush=True)
-    return transcriptionFilePath
+    print(f"Transcript: {transcriptFilePath}", flush=True)
+    return transcriptFilePath
 
 
 def isTextValid(text):

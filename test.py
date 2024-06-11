@@ -45,13 +45,13 @@ if __name__ == "__main__":
     # 產生逐字稿
     transcriber = getTranscriber()
     audioDirectory = os.path.join(prefix, "audio")
-    transcriptionDirectory = os.path.join(prefix, "transcript")
+    transcriptDirectory = os.path.join(prefix, "transcript")
     for channel, title, processedTitle, prompts, duration, videoId in metadata:
         audioFilePath = os.path.join(audioDirectory, f"{videoId}.mp3")
-        transcriptionFilePath = os.path.join(transcriptionDirectory, f"{videoId}.srt")
+        transcriptFilePath = os.path.join(transcriptDirectory, f"{videoId}.srt")
         # 檢查逐字稿是否已經存在
-        if not os.path.exists(transcriptionFilePath):
-            print(f"{transcriptionFilePath} 不存在，正在產生逐字稿")
+        if not os.path.exists(transcriptFilePath):
+            print(f"{transcriptFilePath} 不存在，正在產生逐字稿")
             # 檢查音檔是否已經存在
             if not os.path.exists(audioFilePath):
                 print(f"{audioFilePath} 不存在，正在下載音檔")
@@ -61,7 +61,7 @@ if __name__ == "__main__":
                 transcriber,
                 audioDirectory,
                 videoId,
-                transcriptionDirectory,
+                transcriptDirectory,
             )
 
     # 根據逐字稿產生大綱
