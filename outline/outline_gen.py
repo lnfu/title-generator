@@ -2,11 +2,15 @@ import os
 from random import randint
 from openai import OpenAI
 from dotenv import load_dotenv
+from utils.utils import ensureDirectoryExists
 
 TOKEN_LIMIT = 3500
 
 
 def generateOutline(transcriptionDirectory, videoId, outputDirectory):
+    # 檢查目錄
+    ensureDirectoryExists(transcriptionDirectory)
+    ensureDirectoryExists(outputDirectory)
 
     # ChatGPT Client
     load_dotenv(dotenv_path=".env")

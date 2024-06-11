@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 def generateTitle(titleCount, outlineDirectory, videoId, outputDirectory):
 
     # ChatGPT Client
-    load_dotenv(dotenv_path=".env")
     API_KEY = os.getenv("API_KEY")
     MODEL_NAME = "gpt-3.5-turbo"
 

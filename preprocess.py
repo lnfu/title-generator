@@ -2,8 +2,10 @@ import os
 import csv
 import json
 import argparse
+from dotenv import load_dotenv
 from transcript.speech2text import downloadAudio, generateTranscript, getTranscriber
 from outline.outline_gen import generateOutline
+from utils.utils import ensureDirectoryExists
 
 promptTypes = {
     "驚嘆": "驚嘆語句",
@@ -13,7 +15,8 @@ promptTypes = {
     "轉折": "轉折句",
 }
 
-systemContent = '你是一位在 YouTube 平台上的影音創作者，你擅長撰寫吸引人的影片標題。'
+systemContent = "你是一位在 YouTube 平台上的影音創作者，你擅長撰寫吸引人的影片標題。"
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
@@ -45,6 +48,7 @@ def parse_arguments():
 if __name__ == "__main__":
     args = parse_arguments()
 
+    load_dotenv(dotenv_path='.env')
     metadataFilePath = args.metadata_file
 
     if args.output_directory:
@@ -52,7 +56,10 @@ if __name__ == "__main__":
             args.output_directory, os.path.splitext(metadataFilePath)[0]
         )
     else:
+        ensureDirectoryExists('data')
         prefix = os.path.join("data", os.path.splitext(metadataFilePath)[0])
+
+    ensureDirectoryExists(prefix)
 
     with open(metadataFilePath, "r", encoding="utf-8") as metadataFile:
         metadata = list(csv.reader(metadataFile))[1:]
@@ -80,7 +87,7 @@ if __name__ == "__main__":
         )
 
     # 利用大綱產生 fine tuning dataset
-    datasetFilePath = os.path.join(prefix, 'dataset.jsonl')
+    datasetFilePath = os.path.join(prefix, "dataset.jsonl")
     for channel, title, processedTitle, prompts, duration, videoId in metadata:
         outlineFilePath = os.path.join(
             os.path.join(prefix, "outline"), videoId + ".txt"
@@ -124,4 +131,4 @@ if __name__ == "__main__":
             datasetFile.write("\n")
 
         print(videoId)
-    print(f'Preprocessing complete. Dataset is at {datasetFilePath}')
+    print(f"Preprocessing complete. Dataset is at {datasetFilePath}")

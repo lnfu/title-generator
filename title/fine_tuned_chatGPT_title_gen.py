@@ -1,10 +1,8 @@
 def generateTitle():
     from openai import OpenAI
-    from dotenv import load_dotenv
     import os
 
     title_count = 5
-    load_dotenv(dotenv_path='.env')
 
     API_KEY = os.getenv('API_KEY')
     MODEL_NAME = os.getenv('FINE_TUNED_MODEL_NAME')

@@ -2,12 +2,16 @@ import os
 import torch
 from pytube import YouTube
 from transformers import pipeline, GenerationConfig
+from utils.utils import ensureDirectoryExists
 
 whisperPretrainedModel = "openai/whisper-small"
 whisperModel = "Jingmiao/whisper-small-zh_tw"
 
 
 def downloadAudio(videoId, outputDirectory):
+    # 檢查目錄
+    ensureDirectoryExists(outputDirectory)
+
     # 檢查音檔是否已經存在
     audioFilePath = os.path.join(outputDirectory, f"{videoId}.mp3")
     if os.path.exists(audioFilePath):
@@ -37,6 +41,10 @@ def getTranscriber():
 
 
 def generateTranscript(transcriber, audioDirectory, videoId, outputDirectory):
+    # 檢查目錄
+    ensureDirectoryExists(audioDirectory)
+    ensureDirectoryExists(outputDirectory)
+
     audioFilePath = os.path.join(audioDirectory, f"{videoId}.mp3")
     transcriptionFilePath = os.path.join(outputDirectory, f"{videoId}.srt")
 
